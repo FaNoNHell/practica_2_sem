@@ -18,6 +18,7 @@ public:
 	void InputData();
 private:
 	double h, t{}, T, q, a;
+	int count{};
 	long double* x_and_y = new long double[2];
 	long double* temp1 = new long double[2];
 	long double* temp2 = new long double[2];
@@ -43,6 +44,14 @@ void HunterSystem::InputData()
 	cout << "Input y: ";	//жертва
 	cin >> x_and_y[1];
 	cout << "Данные успешно обновлены" << endl;
+
+	double h_buf = h;
+	
+	while (h_buf < 1)
+	{
+		h_buf *= 10;
+		count++;
+	}
 }
 
 HunterSystem::~HunterSystem()
@@ -103,7 +112,7 @@ void HunterSystem::SystemCalc()
 		{
 			x_and_y[i] += h * (temp1[i] + 2 * temp2[i] + 2 * temp3[i] + temp4[i]) / 6;
 		}
-		t = round((t += h) * 10000)/10000;
+		t = round((t += h) * pow(10, count))/ pow(10, count);
 		cout << t << " " << x_and_y[0] << " " << x_and_y[1] << '\n';	//как выводить шум от времени? одно из значений/по формуле x и y/по другой формуле....
 		file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << endl;
 	}
