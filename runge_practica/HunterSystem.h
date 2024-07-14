@@ -28,6 +28,7 @@ private:
 
 void HunterSystem::InputData()
 {
+	setlocale(LC_ALL, "russian");
 	t = 0;
 	cout << "Input a: ";	//коэффициент вымирания хищников
 	cin >> a;
