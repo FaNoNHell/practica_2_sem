@@ -28,7 +28,7 @@ private:
 
 void HunterSystem::InputData()
 {
-	setlocale(LC_ALL, "russian");
+	setlocale(LC_ALL, "Russian");
 	t = 0;
 	cout << "Input a: ";	//коэффициент вымирания хищников
 	cin >> a;
@@ -103,7 +103,7 @@ void HunterSystem::SystemCalc()
 		{
 			x_and_y[i] += h * (temp1[i] + 2 * temp2[i] + 2 * temp3[i] + temp4[i]) / 6;
 		}
-		t += h;
+		t = round((t += h) * 10000)/10000;
 		cout << t << " " << x_and_y[0] << " " << x_and_y[1] << '\n';	//как выводить шум от времени? одно из значений/по формуле x и y/по другой формуле....
 		file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << endl;
 	}
