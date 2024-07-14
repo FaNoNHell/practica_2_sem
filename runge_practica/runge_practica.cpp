@@ -1,22 +1,66 @@
 ﻿#include <iostream>
-#include <iostream>
 #include <conio.h>
 #include <stdlib.h>
 #include <time.h>
-#define _USE_MATH_DEFINES
 #include <math.h>
 #include <fstream>
+#define _USE_MATH_DEFINES
 
 using namespace std;
 
-void RightParts(double a, double t, double e, long double* x_and_y, long double* fx_and_fy)	//считает правые части уравнений
+
+class HunterSystem
+{
+public:
+	void RightPartsCalc(double a, double t, double e, long double* x_and_y, long double* fx_and_fy);
+	HunterSystem();
+	~HunterSystem();
+	double NoiseGen(double q, double h);
+private:
+	double h, t{}, T, q, a;
+	long double* x_and_y = new long double[2];
+	long double* temp1 = new long double[2];
+	long double* temp2 = new long double[2];
+	long double* temp3 = new long double[2];
+	long double* temp4 = new long double[2];
+	long double* tmp = new long double[2];
+
+};
+
+HunterSystem::HunterSystem()
+{
+	cout << "Input a: ";	//коэффициент вымирания хищников
+	cin >> a;
+	cout << "Input h: ";	//шаг
+	cin >> h;
+	cout << "Input T: ";	//промежуток времени
+	cin >> T;
+	cout << "Input q: ";	//интенсивность шума
+	cin >> q;
+	cout << "Input x: ";	//хищник
+	cin >> x_and_y[0];
+	cout << "Input y: ";	//жертва
+	cin >> x_and_y[1];
+}
+
+HunterSystem::~HunterSystem()
+{
+	delete[]x_and_y;
+	delete[]temp1;
+	delete[]temp2;
+	delete[]temp3;
+	delete[]temp4;
+	delete[]tmp;
+}
+
+void HunterSystem::RightPartsCalc(double a, double t, double e, long double* x_and_y, long double* fx_and_fy)
 {
 	fx_and_fy[0] = -a * (1 + e) * x_and_y[0] + x_and_y[0] * x_and_y[1];
 	fx_and_fy[1] = x_and_y[1] - x_and_y[0] * x_and_y[1];
 	return;
 }
 
-double Noise(double q, double h)
+double HunterSystem::NoiseGen(double q, double h)
 {
 	srand(time(NULL));
 	double y1 = (double)rand() / RAND_MAX;	//если генерируются равномерно распределенные
