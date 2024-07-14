@@ -129,6 +129,9 @@
   <ItemGroup>
     <ClCompile Include="runge_practica.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HunterSystem.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
