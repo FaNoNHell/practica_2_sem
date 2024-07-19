@@ -45,7 +45,7 @@ void HunterSystem::InputData()
 	cin >> x_and_y[1];
 	cout << "Данные успешно обновлены" << endl;
 
-	double h_buf = h;
+	double h_buf;
 	
 	while (h_buf < 1)
 	{
@@ -83,38 +83,28 @@ void HunterSystem::SystemCalc()
 {
 	ofstream file;
 	file.open("data.txt");
+	double e1 = NoiseGen(q, h);	//шум в момент времени 0
+	file << 't' << ' ' << 'x' << ' ' << 'y' << ' ' << ' ' << 'e1' << endl;
+	file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << e1 << endl; //нулевая строка в файл
 	while (t < T)
 	{
-		double e1 = NoiseGen(q, h);	//шум в момент времени 0
-		RightPartsCalc(a, t, e1, x_and_y, temp1);
+		RightPartsCalc(a, t, e1, x_and_y, temp1); //расчет правых частей системы
 		for (int i = 0; i < 2; i++)
-		{
 			tmp[i] = x_and_y[i] + (h * temp1[i]) / 2;
-		}
-		double e2 = NoiseGen(q, h);
+		double e2 = NoiseGen(q, h); //генерация шума
 		RightPartsCalc(a, t, e2, tmp, temp2);
 		for (int i = 0; i < 2; i++)
-		{
-			tmp[i] = x_and_y[i] + (h * temp2[i]) / 2;	//зачем то округлил игрик, хотя входные данные были как надо
-		}
-
-		//шум не генерю потому что тот же момент времени?
+			tmp[i] = x_and_y[i] + (h * temp2[i]) / 2;
 		RightPartsCalc(a, t, e2, tmp, temp3);
 		for (int i = 0; i < 2; i++)
-		{
 			tmp[i] = x_and_y[i] + h * temp3[i];
-		}
-
 		double e3 = NoiseGen(q, h);
 		RightPartsCalc(a, t, e3, tmp, temp4);
-
 		for (int i = 0; i < 2; i++)
-		{
 			x_and_y[i] += h * (temp1[i] + 2 * temp2[i] + 2 * temp3[i] + temp4[i]) / 6;
-		}
 		t = round((t += h) * pow(10, count))/ pow(10, count);
-		cout << t << " " << x_and_y[0] << " " << x_and_y[1] << '\n';	//как выводить шум от времени? одно из значений/по формуле x и y/по другой формуле....
-		file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << endl;
+		cout << t << " " << x_and_y[0] << " " << x_and_y[1] << ' ' << e1 << endl;
+		file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << e1 << endl; //запись в файл
 	}
 	file.close();
 }
