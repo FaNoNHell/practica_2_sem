@@ -45,8 +45,8 @@ void HunterSystem::InputData()
 	cin >> x_and_y[1];
 	cout << "Данные успешно обновлены" << endl;
 
-	double h_buf;
-	
+	double h_buf = h;
+
 	while (h_buf < 1)
 	{
 		h_buf *= 10;
@@ -73,7 +73,7 @@ void HunterSystem::RightPartsCalc(double a, double t, double e, long double* x_a
 
 double HunterSystem::NoiseGen(double q, double h)
 {
-	srand(time(NULL));
+	srand(clock());
 	double y1 = (double)rand() / RAND_MAX;	//если генерируются равномерно распределенные
 	double y2 = (double)rand() / RAND_MAX;
 	double e = q / (sqrt(h / 2)) * sqrt((-2) * log(y1)) * cos(2 * y2 * 3.1415);	//y2 точно внутри косинуса?; зачем с шагом h/2?
@@ -85,7 +85,7 @@ void HunterSystem::SystemCalc()
 	file.open("data.txt");
 	double e1 = NoiseGen(q, h);	//шум в момент времени 0
 	file << 't' << ' ' << 'x' << ' ' << 'y' << ' ' << ' ' << 'e1' << endl;
-	file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << e1 << endl; //нулевая строка в файл
+	file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << 'e1' << endl; //нулевая строка в файл
 	while (t < T)
 	{
 		RightPartsCalc(a, t, e1, x_and_y, temp1); //расчет правых частей системы
@@ -98,8 +98,8 @@ void HunterSystem::SystemCalc()
 		RightPartsCalc(a, t, e2, tmp, temp3);
 		for (int i = 0; i < 2; i++)
 			tmp[i] = x_and_y[i] + h * temp3[i];
-		double e3 = NoiseGen(q, h);
-		RightPartsCalc(a, t, e3, tmp, temp4);
+		double e1 = NoiseGen(q, h);
+		RightPartsCalc(a, t, e1, tmp, temp4);
 		for (int i = 0; i < 2; i++)
 			x_and_y[i] += h * (temp1[i] + 2 * temp2[i] + 2 * temp3[i] + temp4[i]) / 6;
 		t = round((t += h) * pow(10, count))/ pow(10, count);
