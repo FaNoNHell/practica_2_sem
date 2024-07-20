@@ -11,7 +11,7 @@ using namespace std;
 class HunterSystem
 {
 public:
-	void RightPartsCalc(double a, double t, double e, long double* x_and_y, long double* fx_and_fy);
+	long double* RightPartsCalc(double a, double t, double e, long double* x_and_y, long double* fx_and_fy);
 	double NoiseGen(double q, double h);
 	void SystemCalc();
 	~HunterSystem();
@@ -64,11 +64,11 @@ HunterSystem::~HunterSystem()
 	delete[]tmp;
 }
 
-void HunterSystem::RightPartsCalc(double a, double t, double e, long double* x_and_y, long double* fx_and_fy)
+long double* HunterSystem::RightPartsCalc(double a, double t, double e, long double* x_and_y, long double* fx_and_fy)
 {
-	fx_and_fy[0] = -a * (1 + e) * x_and_y[0] + x_and_y[0] * x_and_y[1];
+	fx_and_fy[0] = -a * (1.0 + e) * x_and_y[0] + x_and_y[0] * x_and_y[1];
 	fx_and_fy[1] = x_and_y[1] - x_and_y[0] * x_and_y[1];
-	return;
+	return fx_and_fy;
 }
 
 double HunterSystem::NoiseGen(double q, double h)
@@ -76,7 +76,7 @@ double HunterSystem::NoiseGen(double q, double h)
 	srand(clock());
 	double y1 = (double)rand() / RAND_MAX;	//если генерируются равномерно распределенные
 	double y2 = (double)rand() / RAND_MAX;
-	double e = q / (sqrt(h / 2)) * sqrt((-2) * log(y1)) * cos(2 * y2 * 3.1415);	//y2 точно внутри косинуса?; зачем с шагом h/2?
+	double e = q / (sqrt(h / 2.0)) * sqrt((-2.0) * log(y1)) * cos(2.0 * y2 * 3.1415);	//y2 точно внутри косинуса?; зачем с шагом h/2?
 	return e;
 }
 void HunterSystem::SystemCalc()
