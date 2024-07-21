@@ -11,13 +11,13 @@ using namespace std;
 class HunterSystem
 {
 public:
-	long double* RightPartsCalc(double a, double t, double e, long double* x_and_y, long double* fx_and_fy);
-	double NoiseGen(double q, double h);
+	long double* RightPartsCalc(double a, double t, double ksi, long double* x_and_y, long double* fx_and_fy);
+	double NoiseGen(double sigma, double h);
 	void SystemCalc();
 	~HunterSystem();
 	void InputData();
 private:
-	double h, t{}, T, q, a;
+	double h, t{}, T, sigma, a;
 	int count{};
 	long double* x_and_y = new long double[2];
 	long double* temp1 = new long double[2];
@@ -31,19 +31,19 @@ void HunterSystem::InputData()
 {
 	setlocale(LC_ALL, "Russian");
 	t = 0;
-	cout << "Input a: ";	//êîýôôèöèåíò âûìèðàíèÿ õèùíèêîâ
+	cout << "Input a: ";	//ÃªÃ®Ã½Ã´Ã´Ã¨Ã¶Ã¨Ã¥Ã­Ã² Ã¢Ã»Ã¬Ã¨Ã°Ã Ã­Ã¨Ã¿ ÃµÃ¨Ã¹Ã­Ã¨ÃªÃ®Ã¢
 	cin >> a;
-	cout << "Input h: ";	//øàã
+	cout << "Input h: ";	//Ã¸Ã Ã£
 	cin >> h;
-	cout << "Input T: ";	//ïðîìåæóòîê âðåìåíè
+	cout << "Input T: ";	//Ã¯Ã°Ã®Ã¬Ã¥Ã¦Ã³Ã²Ã®Ãª Ã¢Ã°Ã¥Ã¬Ã¥Ã­Ã¨
 	cin >> T;
-	cout << "Input q: ";	//èíòåíñèâíîñòü øóìà
-	cin >> q;
-	cout << "Input x: ";	//õèùíèê
+	cout << "Input sigma: ";	//Ã¨Ã­Ã²Ã¥Ã­Ã±Ã¨Ã¢Ã­Ã®Ã±Ã²Ã¼ Ã¸Ã³Ã¬Ã 
+	cin >> sigma;
+	cout << "Input x: ";	//ÃµÃ¨Ã¹Ã­Ã¨Ãª
 	cin >> x_and_y[0];
-	cout << "Input y: ";	//æåðòâà
+	cout << "Input y: ";	//Ã¦Ã¥Ã°Ã²Ã¢Ã 
 	cin >> x_and_y[1];
-	cout << "Äàííûå óñïåøíî îáíîâëåíû" << endl;
+	cout << "Ã„Ã Ã­Ã­Ã»Ã¥ Ã³Ã±Ã¯Ã¥Ã¸Ã­Ã® Ã®Ã¡Ã­Ã®Ã¢Ã«Ã¥Ã­Ã»" << endl;
 
 	double h_buf = h;
 
@@ -64,47 +64,47 @@ HunterSystem::~HunterSystem()
 	delete[]tmp;
 }
 
-long double* HunterSystem::RightPartsCalc(double a, double t, double e, long double* x_and_y, long double* fx_and_fy)
+long double* HunterSystem::RightPartsCalc(double a, double t, double ksi, long double* x_and_y, long double* fx_and_fy)
 {
-	fx_and_fy[0] = -a * (1.0 + e) * x_and_y[0] + x_and_y[0] * x_and_y[1];
+	fx_and_fy[0] = -a * (1.0 + ksi) * x_and_y[0] + x_and_y[0] * x_and_y[1];
 	fx_and_fy[1] = x_and_y[1] - x_and_y[0] * x_and_y[1];
 	return fx_and_fy;
 }
 
-double HunterSystem::NoiseGen(double q, double h)
+double HunterSystem::NoiseGen(double sigma, double h)
 {
 	srand(clock());
-	double y1 = (double)rand() / RAND_MAX;	//åñëè ãåíåðèðóþòñÿ ðàâíîìåðíî ðàñïðåäåëåííûå
+	double y1 = (double)rand() / RAND_MAX;	//Ã¥Ã±Ã«Ã¨ Ã£Ã¥Ã­Ã¥Ã°Ã¨Ã°Ã³Ã¾Ã²Ã±Ã¿ Ã°Ã Ã¢Ã­Ã®Ã¬Ã¥Ã°Ã­Ã® Ã°Ã Ã±Ã¯Ã°Ã¥Ã¤Ã¥Ã«Ã¥Ã­Ã­Ã»Ã¥
 	double y2 = (double)rand() / RAND_MAX;
-	double e = q / (sqrt(h / 2.0)) * sqrt((-2.0) * log(y1)) * cos(2.0 * y2 * 3.1415);	//y2 òî÷íî âíóòðè êîñèíóñà?; çà÷åì ñ øàãîì h/2?
-	return e;
+	double ksi = sigma / (sqrt(h / 2.0)) * sqrt((-2.0) * log(y1)) * cos(2.0 * y2 * 3.1415);	//y2 Ã²Ã®Ã·Ã­Ã® Ã¢Ã­Ã³Ã²Ã°Ã¨ ÃªÃ®Ã±Ã¨Ã­Ã³Ã±Ã ?; Ã§Ã Ã·Ã¥Ã¬ Ã± Ã¸Ã Ã£Ã®Ã¬ h/2?
+	return ksi;
 }
 void HunterSystem::SystemCalc()
 {
 	ofstream file;
 	file.open("data.txt");
-	double e1 = NoiseGen(q, h);	//øóì â ìîìåíò âðåìåíè 0
-	file << 't' << ' ' << 'x' << ' ' << 'y' << ' ' << ' ' << 'e1' << endl;
-	file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << 'e1' << endl; //íóëåâàÿ ñòðîêà â ôàéë
+	double ksi1 = NoiseGen(sigma, h);	//Ã¸Ã³Ã¬ Ã¢ Ã¬Ã®Ã¬Ã¥Ã­Ã² Ã¢Ã°Ã¥Ã¬Ã¥Ã­Ã¨ 0
+	file << 't' << ' ' << 'x' << ' ' << 'y' << ' ' << ' ' << 'ksi1' << endl;
+	file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << 'ksi1' << endl; //Ã­Ã³Ã«Ã¥Ã¢Ã Ã¿ Ã±Ã²Ã°Ã®ÃªÃ  Ã¢ Ã´Ã Ã©Ã«
 	while (t < T)
 	{
-		RightPartsCalc(a, t, e1, x_and_y, temp1); //ðàñ÷åò ïðàâûõ ÷àñòåé ñèñòåìû
+		RightPartsCalc(a, t, ksi1, x_and_y, temp1); //Ã°Ã Ã±Ã·Ã¥Ã² Ã¯Ã°Ã Ã¢Ã»Ãµ Ã·Ã Ã±Ã²Ã¥Ã© Ã±Ã¨Ã±Ã²Ã¥Ã¬Ã»
 		for (int i = 0; i < 2; i++)
 			tmp[i] = x_and_y[i] + (h * temp1[i]) / 2;
-		double e2 = NoiseGen(q, h); //ãåíåðàöèÿ øóìà
-		RightPartsCalc(a, t, e2, tmp, temp2);
+		double ksi2 = NoiseGen(sigma, h); //Ã£Ã¥Ã­Ã¥Ã°Ã Ã¶Ã¨Ã¿ Ã¸Ã³Ã¬Ã 
+		RightPartsCalc(a, t, ksi2, tmp, temp2);
 		for (int i = 0; i < 2; i++)
 			tmp[i] = x_and_y[i] + (h * temp2[i]) / 2;
-		RightPartsCalc(a, t, e2, tmp, temp3);
+		RightPartsCalc(a, t, ksi2, tmp, temp3);
 		for (int i = 0; i < 2; i++)
 			tmp[i] = x_and_y[i] + h * temp3[i];
-		double e1 = NoiseGen(q, h);
-		RightPartsCalc(a, t, e1, tmp, temp4);
+		double ksi1 = NoiseGen(sigma, h);
+		RightPartsCalc(a, t, ksi1, tmp, temp4);
 		for (int i = 0; i < 2; i++)
 			x_and_y[i] += h * (temp1[i] + 2 * temp2[i] + 2 * temp3[i] + temp4[i]) / 6;
 		t = round((t += h) * pow(10, count))/ pow(10, count);
-		cout << t << " " << x_and_y[0] << " " << x_and_y[1] << ' ' << e1 << endl;
-		file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << e1 << endl; //çàïèñü â ôàéë
+		cout << t << " " << x_and_y[0] << " " << x_and_y[1] << ' ' << ksi1 << endl;
+		file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << ksi1 << endl; //Ã§Ã Ã¯Ã¨Ã±Ã¼ Ã¢ Ã´Ã Ã©Ã«
 	}
 	file.close();
 }
