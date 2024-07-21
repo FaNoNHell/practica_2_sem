@@ -31,19 +31,19 @@ void HunterSystem::InputData()
 {
 	setlocale(LC_ALL, "Russian");
 	t = 0;
-	cout << "Input a: ";	//êîýôôèöèåíò âûìèðàíèÿ õèùíèêîâ
+	cout << "Input a: ";	//коэффициент вымирания хищников
 	cin >> a;
-	cout << "Input h: ";	//øàã
+	cout << "Input h: ";	//шаг
 	cin >> h;
-	cout << "Input T: ";	//ïðîìåæóòîê âðåìåíè
+	cout << "Input T: ";	//промежуток времени
 	cin >> T;
-	cout << "Input sigma: ";	//èíòåíñèâíîñòü øóìà
+	cout << "Input sigma: ";//интенсивность шума
 	cin >> sigma;
-	cout << "Input x: ";	//õèùíèê
+	cout << "Input x: ";	//хищник
 	cin >> x_and_y[0];
-	cout << "Input y: ";	//æåðòâà
+	cout << "Input y: ";	//жертва
 	cin >> x_and_y[1];
-	cout << "Äàííûå óñïåøíî îáíîâëåíû" << endl;
+	cout << "Данные успешно обновлены" << endl;
 
 	double h_buf = h;
 
@@ -74,24 +74,24 @@ long double* HunterSystem::RightPartsCalc(double a, double t, double ksi, long d
 double HunterSystem::NoiseGen(double sigma, double h)
 {
 	srand(clock());
-	double y1 = (double)rand() / RAND_MAX;	//åñëè ãåíåðèðóþòñÿ ðàâíîìåðíî ðàñïðåäåëåííûå
+	double y1 = (double)rand() / RAND_MAX;	// генерания [0:1]
 	double y2 = (double)rand() / RAND_MAX;
-	double ksi = sigma / (sqrt(h / 2.0)) * sqrt((-2.0) * log(y1)) * cos(2.0 * y2 * 3.1415);	//y2 òî÷íî âíóòðè êîñèíóñà?; çà÷åì ñ øàãîì h/2?
+	double ksi = sigma / (sqrt(h / 2.0)) * sqrt((-2.0) * log(y1)) * cos(2.0 * y2 * 3.1415);
 	return ksi;
 }
 void HunterSystem::SystemCalc()
 {
 	ofstream file;
 	file.open("data.txt");
-	double ksi1 = NoiseGen(sigma, h);	//øóì â ìîìåíò âðåìåíè 0
+	double ksi1 = NoiseGen(sigma, h);	//шум в момент времени 0
 	file << 't' << ' ' << 'x' << ' ' << 'y' << ' ' << ' ' << "ksi1" << endl;
-	file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << ksi1 << endl; //íóëåâàÿ ñòðîêà â ôàéë
+	file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << ksi1 << endl; //нулевая строка в файл
 	while (t < T)
 	{
-		RightPartsCalc(a, t, ksi1, x_and_y, temp1); //ðàñ÷åò ïðàâûõ ÷àñòåé ñèñòåìû
+		RightPartsCalc(a, t, ksi1, x_and_y, temp1); //расчет правых частей системы
 		for (int i = 0; i < 2; i++)
 			tmp[i] = x_and_y[i] + (h * temp1[i]) / 2;
-		double ksi2 = NoiseGen(sigma, h); //ãåíåðàöèÿ øóìà
+		double ksi2 = NoiseGen(sigma, h); //генерация шума
 		RightPartsCalc(a, t, ksi2, tmp, temp2);
 		for (int i = 0; i < 2; i++)
 			tmp[i] = x_and_y[i] + (h * temp2[i]) / 2;
@@ -104,7 +104,7 @@ void HunterSystem::SystemCalc()
 			x_and_y[i] += h * (temp1[i] + 2 * temp2[i] + 2 * temp3[i] + temp4[i]) / 6;
 		t = round((t += h) * pow(10, count))/ pow(10, count);
 		cout << t << " " << x_and_y[0] << " " << x_and_y[1] << ' ' << ksi1 << endl;
-		file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << ksi1 << endl; //çàïèñü â ôàéë
+		file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << ksi1 << endl; //запись в файл
 	}
 	file.close();
 }
