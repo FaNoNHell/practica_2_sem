@@ -84,8 +84,8 @@ void HunterSystem::SystemCalc()
 	ofstream file;
 	file.open("data.txt");
 	double ksi1 = NoiseGen(sigma, h);	//øóì â ìîìåíò âðåìåíè 0
-	file << 't' << ' ' << 'x' << ' ' << 'y' << ' ' << ' ' << 'ksi1' << endl;
-	file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << 'ksi1' << endl; //íóëåâàÿ ñòðîêà â ôàéë
+	file << 't' << ' ' << 'x' << ' ' << 'y' << ' ' << ' ' << "ksi1" << endl;
+	file << t << ' ' << x_and_y[0] << ' ' << x_and_y[1] << ' ' << ksi1 << endl; //íóëåâàÿ ñòðîêà â ôàéë
 	while (t < T)
 	{
 		RightPartsCalc(a, t, ksi1, x_and_y, temp1); //ðàñ÷åò ïðàâûõ ÷àñòåé ñèñòåìû
