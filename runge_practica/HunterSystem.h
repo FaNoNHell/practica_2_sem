@@ -8,7 +8,7 @@
 //использование поля имён std
 using namespace std;
 
-//объявлление класса
+//объявление класса
 class HunterSystem
 {
 public:
